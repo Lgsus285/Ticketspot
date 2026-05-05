@@ -89,4 +89,11 @@ input {
 
 .hero{
     min-height: 72vh;
+    display: grid;
+    place-items: center;
+    padding: 5rem 0 4rem;
+    color: #fff;
+    text-align:center;
+    background: linear-gradient(180deg, rgba(11, 11, 18, 0.76), rgba(11, 11, 18, 0.82)),
+    url(imagenes/fondo.png) center/cover no-repeat;
 }
