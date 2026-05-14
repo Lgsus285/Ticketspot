@@ -143,4 +143,31 @@ input {
   transform: translateY(-2px);
 }
 
+.featured-events,
+.event-linsting,
+.detail-section,
+.login-section {
+  padding: 4rem 0;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 2rem;    
+  }
+
+  .section-title h2 {
+    margin: 0;
+    font-size: clamp(1.85rem, 2.5vw, 2.5rem);
+   
+  }
+
+  .section-title p {
+    color: var(--text-secondary);
+    max-width: 680px;
+
+  }
+
 
