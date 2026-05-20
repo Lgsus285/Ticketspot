@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ticketspots</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../style.css">
 </head>
 <body>
     <header class="site-header">
         <div class="container header-inner">
-           <a class="logo" href="index.html">Ticketspot</a>
+           <a class="logo" href="index.html">SPOTICKET</a>
               <nav class="site-nav">
                   <a class="active" href="inicio.html">Inicio</a>
                   <a href="eventos.html">eventos</a>
@@ -30,7 +30,7 @@
                 <div style="display: flex; justify-content: center; gap:1rem ;
                  flex-wrap: wrap; margin: top 2rem;">
                     <a class="btn-primary" href="eventos.html"> Ver eventos</a>
-                    <a class="btn-secundary" href="login.html">Login</a>
+                    <a class="btn-secondary" href="login.html">Iniciar sesion</a>
                 </div>
             </div>
         </section>
@@ -52,7 +52,7 @@
                    <h3>Festival Urban Beats</h3>
                    <p>Una noche de musica sin pausa con artistas invitados.</p>
                    <p class="event-price">$45.00</p>
-                   <a class="btn btn-secundary" href="detalle.html">Ver detalles</a>
+                   <a class="btn btn-secondary" href="detalle.html?event=festival-urban-beats">Ver detalles</a>
                 </div>
             </article>
 
@@ -62,7 +62,7 @@
                     <h3>Concierto estelar</h3>
                     <p>vive una jornada llena de exitos y energía en vivo</p>
                     <p class="event-price">$60.00</p>
-                    <a class="btn btn-secundary" href="detalle.html">Ver detalles</a>
+                    <a class="btn btn-secondary" href="detalle.html?event=concierto-estelar">Ver detalles</a>
                 </div>
             </article>
 
@@ -72,14 +72,16 @@
                     <h3>Teatro clásico</h3>
                     <p>una obra maestra del teatro con actuaciones excepcionales</p>
                     <p class="event-price">$30.00</p>
-                    <a class="btn btn-secundary" href="detalle.html">Ver detalles</a>
+                    <a class="btn btn-secondary" href="detalle.html?event=obra-teatro-vip">Ver detalles</a>
                 </div>
             </article>
          </div>
         </section>
     </main>
+    <script src="index.js"></script>
+    <script src="../js/index.js"></script>
     <footer>
-        <div>&copy;Ticketspot, panama2026.</div>
+        <div>&copy;Spoticket, panama2026.</div>
     </footer>
 </body>
 </html>
