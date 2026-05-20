@@ -169,5 +169,21 @@ input {
     max-width: 680px;
 
   }
+.event-grid,
+.card-grid{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+}
+
+.event-card,
+.detail-card
+.login-card {
+  background: var(--bg-soft);
+  border: 1px solid var(--border);
+  border-radius: 28px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
 
 
