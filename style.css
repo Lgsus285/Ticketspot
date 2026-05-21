@@ -142,7 +142,6 @@ input {
 {
   transform: translateY(-2px);
 }
-
 .featured-events,
 .event-linsting,
 .detail-section,
@@ -261,6 +260,6 @@ border-bottom: 1px solid rgba(255, 255, 255, 0.08) ;
   transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
  }
 
- 
+
 
 
