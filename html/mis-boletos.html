@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Eventos | Ticketspot</title>
+  <title>Mis boletos | Ticketspot</title>
   <link rel="stylesheet" href="../style.css" />
 </head>
 <body>
@@ -12,8 +12,8 @@
       <a class="logo" href="index.html">TICKETSPOT</a>
       <nav class="site-nav">
         <a href="index.html">Inicio</a>
-        <a class="active" href="eventos.html">Eventos</a>
-        <a data-nav="mis-boletos" href="mis-boletos.html" style="display:none;">Mis boletos</a>
+        <a href="eventos.html">Eventos</a>
+        <a class="active" data-nav="mis-boletos" href="mis-boletos.html" style="display:none;">Mis boletos</a>
         <a data-nav="login" href="login.html">Login</a>
         <a data-nav="logout" href="#" style="display:none;">Cerrar sesión</a>
       </nav>
@@ -24,25 +24,25 @@
     <section class="event-listing container" style="padding: 3rem 0;">
       <div class="section-title">
         <div>
-          <h2>Todos los eventos</h2>
-          <p>Explora el catálogo completo y elige el boleto que más te convenga.</p>
+          <h2>Mis boletos</h2>
+          <p>Aquí están todas tus compras, con su código QR y el recibo en PDF.</p>
         </div>
       </div>
 
-      <div class="event-grid" id="event-grid">
-        <p style="color:var(--text-secondary);">Cargando eventos...</p>
-      </div>
+      <div id="boletos-lista" class="boletos-grid"></div>
     </section>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="../js/config.js"></script>
   <script src="../js/supabaseClient.js"></script>
   <script src="../js/nav-auth.js"></script>
-  <script src="../js/eventos.js"></script>
+  <script src="../js/misboletos.js"></script>
 
   <footer class="site-footer">
-    <div class="container">&copy; 2026 Ticketspot. Eventos cargados en vivo desde Supabase.</div>
+    <div class="container">&copy; 2026 Ticketspot. Tu historial de compras, guardado en Supabase.</div>
   </footer>
 </body>
 </html>

@@ -1,74 +1,80 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detalle del evneto | Spoticket</title>
-    <link rel="stylesheet" href="../style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Detalle del evento | Ticketspot</title>
+  <link rel="stylesheet" href="../style.css" />
 </head>
 <body>
-    <header class="site-header">
-        <div class="container header-inner">
-            <a class="logo" href="index.html">SPOTICKET</a>
-            <nav class="container header-inner">
-                <a href="index.html">INICIO</a>
-                <a href="eventos.html">EVENTOS</a>
-                <a href="login.html">LOGIN</a>
-            </nav>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="index.html">TICKETSPOT</a>
+      <nav class="site-nav">
+        <a href="index.html">Inicio</a>
+        <a href="eventos.html">Eventos</a>
+        <a data-nav="mis-boletos" href="mis-boletos.html" style="display:none;">Mis boletos</a>
+        <a data-nav="login" href="login.html">Login</a>
+        <a data-nav="logout" href="#" style="display:none;">Cerrar sesión</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="detail-section container">
+      <div class="section-title">
+        <div>
+          <p id="event-label" style="margin-bottom:0.8rem;text-transform: uppercase; letter-spacing: 0.18em; color: #ff8a94; font-weight: 700;">Evento destacado</p>
+          <h2 id="event-heading">Cargando evento...</h2>
         </div>
-    </header>
-    <main>
-        <section class="detail-section container">
-            <div class="section-title">
-                <div>
-                <p id="event-label" style="margin-bottom:0.8rem;text-transform: uppercase; letter-spacing: 0.18em; 
-                color: #ff8a94; font-weight: 700;">Evento destacado</p>
-                <h2 id="event-heading">Concierto Estelar: La noche del pop</h2>
+      </div>
+      <p id="event-description">Selecciona tu boleto y confirma tu compra con la estética y claridad de una plataforma profesional de venta de tickets.</p>
+
+      <div class="detail-card">
+        <div class="detail-grid">
+          <img id="event-image" src="../imagenes/fondo.png" alt="Evento">
+
+          <div class="detail-content">
+            <h1 id="event-title">—</h1>
+            <p id="event-summary"></p>
+          </div>
+
+          <div class="detail-info">
+            <span id="event-date"><strong>Fecha:</strong></span>
+            <span id="event-location"><strong>Ubicación:</strong></span>
+            <span id="event-entry"><strong>Entrada:</strong></span>
+          </div>
+
+          <div>
+            <h3>Elige tu boleto</h3>
+            <div class="ticket-options">
+              <button id="ticket-general" class="ticket-option selected" type="button" data-type="general">General</button>
+              <button id="ticket-vip" class="ticket-option" type="button" data-type="vip">VIP</button>
             </div>
-            <p id="event-description">Selecciona tu boleto y confirma tu compra con la esetica y claridad de una plataforma
-                profesional de venta de tickets.
-            </p>
+
+            <label for="ticket-quantity" style="display:block; margin-bottom: 0.5rem; color: var(--text-secondary);">Cantidad de boletos</label>
+            <input id="ticket-quantity" type="number" min="1" max="10" value="1" style="width: 90px; padding: 0.6rem 0.8rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.04); color: #fff; margin-bottom: 1rem;" />
+
+            <p id="price-summary" style="font-weight: 700; margin-bottom: 1.4rem;"></p>
+          </div>
+
+          <button id="buy-button" class="btn-primary" type="button" style="width:100%;">Confirmar compra</button>
+          <p style="margin-top: 1.25rem; color: var(--text-secondary);">El pago se simula con fines académicos: no se procesa ningún cargo real.</p>
         </div>
+      </div>
+    </section>
+  </main>
 
-        <div class="detail-card" ></div>
-            <div class="detail-grid">
-                <img id="event-image" src="https://www.centroamericacuenta.com/cdn/shop/files/Recurso_7.png?v=1773763077&width=940" alt="concierto estelar">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/config.js"></script>
+  <script src="../js/supabaseClient.js"></script>
+  <script src="../js/nav-auth.js"></script>
+  <script src="../js/detalle.js"></script>
 
-                <div class="detail-content">
-                    <h1 id="event-title">Concierto Estelar</h1>
-                    <p id="event-summary">Vive una jornada llena de éxitos y energía en vivo con el concierto estelar,
-                         donde los artistas más populares del momento se reúnen para ofrecer un espectáculo inolvidable.
-                          Desde baladas emotivas hasta ritmos contagiosos, este evento promete una experiencia musical 
-                          única que hará vibrar a todos los asistentes. No te pierdas la oportunidad de ser parte de esta 
-                          noche mágica llena de música, emoción y momentos inolvidables.</p>
-                </div>
-
-                <div class="detail-info">
-                    <span id="event-date"><strong>Fecha:</strong>24 de mayo, 2026</span>
-                    <span id="event-location"><strong>Ubicaion:</strong>arena central, Ciudad de Panamá</span>
-                    <span id="event-entry"><strong>Entrada:</strong>Disfuta de asientos cerncanos o áreas VIP exclusivas</span>
-                </div>
-
-                <div>
-                    <h3>Elegi tu boleto</h3>
-                    <div class="ticket-options"> 
-                        <button class="ticket-option" type="button"> Genaral - $60</button>
-                        <button class="ticket-option" type="button">VIP - $120</button>
-                    </div>
-                </div>
-
-                <a id="buy-button" class="btn-primary" href="login.html">Confirmar compra</a>
-               
-            </div>
-        </div>
-        </section>
-    </main>
-    
-<script src="../js/detalle.js"> </script>
-    <footer class="site-footer">
-        <div class="container">
-            <p>&copy; 2026 Spoticket. Todos los derechos reservados.</p>
-        </div>
-    </footer>
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; 2026 Ticketspot. Todos los derechos reservados.</p>
+    </div>
+  </footer>
 </body>
 </html>

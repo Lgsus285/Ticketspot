@@ -1,87 +1,62 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ticketspots</title>
-    <link rel="stylesheet" href="../style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ticketspot</title>
+  <link rel="stylesheet" href="../style.css" />
 </head>
 <body>
-    <header class="site-header">
-        <div class="container header-inner">
-           <a class="logo" href="index.html">SPOTICKET</a>
-              <nav class="site-nav">
-                  <a class="active" href="inicio.html">Inicio</a>
-                  <a href="eventos.html">eventos</a>
-                  <a href="Login.html">Login</a>
-              </nav>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="index.html">TICKETSPOT</a>
+      <nav class="site-nav">
+        <a class="active" href="index.html">Inicio</a>
+        <a href="eventos.html">Eventos</a>
+        <a data-nav="mis-boletos" href="mis-boletos.html" style="display:none;">Mis boletos</a>
+        <a data-nav="login" href="login.html">Login</a>
+        <a data-nav="logout" href="#" style="display:none;">Cerrar sesión</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container">
+        <p style="margin-bottom: 1rem;text-transform: uppercase; letter-spacing: 0.18em; color: #ff8a94; font-weight: 700;">
+          Compra tus boletos fácil y rápido
+        </p>
+        <h1>COMPRA TUS BOLETOS</h1>
+        <p>Disfruta de una experiencia profesional para adquirir entradas a conciertos, teatros, festivales y eventos exclusivos.</p>
+        <div style="display: flex; justify-content: center; gap:1rem; flex-wrap: wrap; margin-top: 2rem;">
+          <a class="btn-primary" href="eventos.html">Ver eventos</a>
+          <a class="btn-secondary" href="login.html">Iniciar sesión</a>
         </div>
-    </header>
+      </div>
+    </section>
 
-    <main>
-        <section class="hero">
-            <div class="container">
-                <p style="margin-bottom: 1rem;text-transform: uppercase; 
-                letter-spacing: 0.18em; color: #ff8a94; font-weight: 700;">
-                Compra tus boletos fácil y rápido</p>
-                <h1>COMPRA TUS BOLETOS</h1>
-                <p>Disfruta de una experiencia profesional para adquirir entradas
-                 o conciertos, teatros, festivales y eventos exclusivos</p>
-                <div style="display: flex; justify-content: center; gap:1rem ;
-                 flex-wrap: wrap; margin: top 2rem;">
-                    <a class="btn-primary" href="eventos.html"> Ver eventos</a>
-                    <a class="btn-secondary" href="login.html">Iniciar sesion</a>
-                </div>
-            </div>
-        </section>
+    <section class="featured-events container">
+      <div class="section-title">
+        <div>
+          <h2>Eventos destacados</h2>
+          <p>Los mejores espectáculos del mes con los boletos disponibles en diferentes categorías.</p>
+        </div>
+      </div>
 
-        <section class="featured-events container">
-         <div class="section-title">
-            <div>
-            <h2>Eventos destacados</h2>
-            <p>los mejores espectáculos del mes con los boletos
-                disponibles en diferentes categorias.
-            </p>
-            </div>
-         </div>
+      <div class="card-grid" id="featured-grid">
+        <p style="color:var(--text-secondary);">Cargando eventos...</p>
+      </div>
+    </section>
+  </main>
 
-         <div class="card-grid">
-            <article class="event-card">
-                <img src="../imagenes/500KMJUNIO.jpg" alt="">
-                <div class="event-card-content">
-                   <h3>500 KM PANAMÁ </h3>
-                   <p>Una noche de carrera sin pausa con artistas invitados.</p>
-                   <p class="event-price">$45.00</p>
-                   <a class="btn btn-secondary" href="detalle.html?event=festival-urban-beats">Ver detalles</a>
-                </div>
-            </article>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/config.js"></script>
+  <script src="../js/supabaseClient.js"></script>
+  <script src="../js/nav-auth.js"></script>
+  <script src="../js/index.js"></script>
 
-            <article class="event-card">
-                <img src="../imagenes/MANDSFAA.jpg" alt="">
-                <div class="event-card-content">
-                    <h3>Concierto Estelar</h3>
-                    <p>una noche con todos sus exitos BY FARRUKO</p>
-                    <p class="event-price">$60.00</p>
-                    <a class="btn btn-secondary" href="detalle.html?event=concierto-estelar">Ver detalles</a>
-                </div>
-            </article>
-
-            <article class="event-card">
-                <img src="../imagenes/PACHFLORESQ.jpg" alt="">
-                <div class="event-card-content">
-                    <h3>Teatro clásico</h3>
-                    <p>una obra maestra del teatro con actuaciones excepcionales</p>
-                    <p class="event-price">$30.00</p>
-                    <a class="btn btn-secondary" href="detalle.html?event=obra-teatro-vip">Ver detalles</a>
-                </div>
-            </article>
-         </div>
-        </section>
-    </main>
-    <script src="index.js"></script>
-    <script src="../js/index.js"></script>
-    <footer>
-        <div>&copy;Spoticket, panama2026.</div>
-    </footer>
+  <footer class="site-footer">
+    <div class="container">&copy; 2026 Ticketspot. Eventos cargados en vivo desde Supabase.</div>
+  </footer>
 </body>
 </html>

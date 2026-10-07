@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pagar | Ticketspot</title>
+  <link rel="stylesheet" href="../style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="index.html">TICKETSPOT</a>
+      <nav class="site-nav">
+        <a href="index.html">Inicio</a>
+        <a href="eventos.html">Eventos</a>
+        <a data-nav="mis-boletos" href="mis-boletos.html" style="display:none;">Mis boletos</a>
+        <a data-nav="login" href="login.html">Login</a>
+        <a data-nav="logout" href="#" style="display:none;">Cerrar sesión</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="detail-section container">
+      <div class="section-title">
+        <div>
+          <p style="margin-bottom: 0.8rem; text-transform: uppercase; letter-spacing: 0.18em; color: #ff8a94; font-weight: 700;">Pago simulado</p>
+          <h2>Confirma tu compra</h2>
+        </div>
+        <p>Completa los datos de tu tarjeta para simular el pago. No se realiza ningún cargo real.</p>
+      </div>
+
+      <div class="checkout-grid">
+        <div class="checkout-card">
+          <div id="checkout-resumen">
+            <p style="color:var(--text-secondary);">Cargando resumen del pedido...</p>
+          </div>
+        </div>
+
+        <div class="checkout-card">
+          <p id="checkout-error" class="auth-mensaje auth-error" style="display:none;"></p>
+
+          <form id="checkout-form" style="display:grid; gap: 1.2rem;">
+            <div>
+              <h3 style="margin-bottom: 0.8rem;">Datos del comprador</h3>
+              <label for="buyer-name">Nombre completo</label>
+              <input id="buyer-name" type="text" placeholder="Nombre de quien compra" required />
+              <label for="buyer-email">Correo (aquí llegará el recibo)</label>
+              <input id="buyer-email" type="email" placeholder="tucorreo@ejemplo.com" required />
+            </div>
+
+            <div>
+              <h3 style="margin-bottom: 0.8rem;">Datos de la tarjeta (simulados)</h3>
+              <label for="card-name">Nombre en la tarjeta</label>
+              <input id="card-name" type="text" placeholder="Como aparece en la tarjeta" required />
+
+              <label for="card-number">Número de tarjeta</label>
+              <input id="card-number" type="text" inputmode="numeric" placeholder="4242 4242 4242 4242" maxlength="23" required />
+
+              <div style="display:flex; gap: 1rem;">
+                <div style="flex:1;">
+                  <label for="card-expiry">Expiración (MM/AA)</label>
+                  <input id="card-expiry" type="text" placeholder="12/28" maxlength="5" required />
+                </div>
+                <div style="flex:1;">
+                  <label for="card-cvv">CVV</label>
+                  <input id="card-cvv" type="text" inputmode="numeric" placeholder="123" maxlength="4" required />
+                </div>
+              </div>
+            </div>
+
+            <button id="btn-pagar" class="btn-primary" type="submit" style="width:100%;">Pagar</button>
+            <p style="color: var(--text-secondary); font-size: 0.85rem; text-align:center;">
+              Este formulario simula un pago con fines académicos. No se conecta a ningún banco ni pasarela real.
+            </p>
+          </form>
+
+          <div id="checkout-exito" style="display:none;"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="../js/config.js"></script>
+  <script src="../js/supabaseClient.js"></script>
+  <script src="../js/nav-auth.js"></script>
+  <script src="../js/checkout.js"></script>
+
+  <footer class="site-footer">
+    <div class="container">&copy; 2026 Ticketspot. Pago simulado, sin cargos reales.</div>
+  </footer>
+</body>
+</html>
