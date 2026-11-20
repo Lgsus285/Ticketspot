@@ -61,12 +61,25 @@ async function cargarMisBoletos() {
       cantidad: orden.quantity,
       comprador: orden.buyer_name,
     });
-    const qrDataUrl = await QRCode.toDataURL(contenidoQr, { width: 160, margin: 1 });
+    let qrDataUrl = "";
     const qrDiv = tarjeta.querySelector(".boleto-qr");
-    qrDiv.innerHTML = `<img src="${qrDataUrl}" alt="QR" style="width:140px;height:140px;border-radius:12px;" />`;
+    try {
+      qrDataUrl = await QRCode.toDataURL(contenidoQr, { width: 160, margin: 1 });
+      qrDiv.innerHTML = `<img src="${qrDataUrl}" alt="QR" style="width:140px;height:140px;border-radius:12px;" />`;
+    } catch (err) {
+      console.error("Error generando el QR:", err);
+      qrDiv.innerHTML = `<p style="color:#ff8a94;font-size:.85rem;">No se pudo generar el QR.</p>`;
+    }
 
     const boton = tarjeta.querySelector("button[data-order-id]");
-    boton.addEventListener("click", () => regenerarPdf(orden, evento, qrDataUrl));
+    boton.addEventListener("click", () => {
+      try {
+        regenerarPdf(orden, evento, qrDataUrl);
+      } catch (err) {
+        console.error("Error generando el PDF:", err);
+        alert("No se pudo generar el PDF: " + (err.message || err));
+      }
+    });
   }
 }
 
@@ -103,8 +116,16 @@ function regenerarPdf(orden, evento, qrDataUrl) {
     y += 22;
   });
 
-  doc.addImage(qrDataUrl, "PNG", 400, 90, 150, 150);
-  doc.save(`recibo-${orden.ticket_code}.pdf`);
+  if (qrDataUrl) doc.addImage(qrDataUrl, "PNG", 400, 90, 150, 150);
+  const blob = doc.output("blob");
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `recibo-${orden.ticket_code}.pdf`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
 }
 
 document.addEventListener("DOMContentLoaded", cargarMisBoletos);

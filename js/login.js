@@ -3,7 +3,14 @@
 // =========================================================
 
 const params = new URLSearchParams(window.location.search);
-const redirectTo = params.get("redirect") || "eventos.html";
+// Solo se permiten destinos internos (ej. "checkout.html?event=..."), nunca otros sitios.
+function destinoSeguro(valor) {
+  if (!valor) return "eventos.html";
+  const limpio = valor.trim();
+  const esExterno = /^[a-z][a-z0-9+.-]*:/i.test(limpio) || limpio.startsWith("//") || limpio.startsWith("\\");
+  return esExterno ? "eventos.html" : limpio;
+}
+const redirectTo = destinoSeguro(params.get("redirect"));
 
 const tabLogin = document.getElementById("tab-login");
 const tabRegister = document.getElementById("tab-register");

@@ -12,6 +12,13 @@ const cantidad = Math.max(1, Math.min(10, parseInt(paramsCheckout.get("qty"), 10
 
 let sesionActual = null;
 let eventoActual = null;
+let enviando = false; // true mientras se procesa un pago (evita doble clic)
+let ordenCreada = false; // evita cobrar dos veces si algo falla después de guardar la compra
+
+// Escapa texto antes de ponerlo dentro de innerHTML.
+function esc(texto) {
+  return String(texto ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
 
 const resumenEl = document.getElementById("checkout-resumen");
 const formEl = document.getElementById("checkout-form");
@@ -183,42 +190,58 @@ if (formEl) {
       return;
     }
 
+    if (ordenCreada || enviando) return;
+    enviando = true;
     botonPagar.disabled = true;
     botonPagar.textContent = "Procesando pago...";
 
-    // Simulación del cobro: aquí NO se conecta ninguna pasarela real,
-    // solo se simula una pequeña espera como lo haría un banco.
-    await new Promise((resolve) => setTimeout(resolve, 1400));
+    try {
+      // Simulación del cobro: aquí NO se conecta ninguna pasarela real,
+      // solo se simula una pequeña espera como lo haría un banco.
+      await new Promise((resolve) => setTimeout(resolve, 1400));
 
-    const precioUnit = tipoBoleto === "vip" ? Number(eventoActual.vip_price) : Number(eventoActual.general_price);
-    const total = precioUnit * cantidad;
-    const ticketCode = generarUUID();
+      const precioUnit = tipoBoleto === "vip" ? Number(eventoActual.vip_price) : Number(eventoActual.general_price);
+      const total = precioUnit * cantidad;
+      const ticketCode = generarUUID();
 
-    const { data: orden, error: errorOrden } = await supabaseClient
-      .from("orders")
-      .insert({
-        user_id: sesionActual.user.id,
-        event_id: eventoActual.id,
-        ticket_type: tipoBoleto,
-        quantity: cantidad,
-        unit_price: precioUnit,
-        total,
-        buyer_name: datos.buyerName,
-        buyer_email: datos.buyerEmail,
-        ticket_code: ticketCode,
-        status: "pagado",
-      })
-      .select()
-      .single();
+      const { data: orden, error: errorOrden } = await supabaseClient
+        .from("orders")
+        .insert({
+          user_id: sesionActual.user.id,
+          event_id: eventoActual.id,
+          ticket_type: tipoBoleto,
+          quantity: cantidad,
+          unit_price: precioUnit,
+          total,
+          buyer_name: datos.buyerName,
+          buyer_email: datos.buyerEmail,
+          ticket_code: ticketCode,
+          status: "pagado",
+        })
+        .select()
+        .single();
 
-    if (errorOrden) {
-      botonPagar.disabled = false;
-      botonPagar.textContent = "Pagar";
-      mostrarError("No se pudo registrar la compra: " + errorOrden.message);
-      return;
+      if (errorOrden) {
+        mostrarError("No se pudo registrar la compra: " + errorOrden.message);
+        return;
+      }
+
+      ordenCreada = true;
+      await finalizarCompra(orden, datos);
+    } catch (err) {
+      // Cualquier fallo inesperado (red, configuración de Supabase, etc.)
+      // cae aquí, para que el botón nunca se quede trabado sin explicación.
+      console.error("Error en el checkout:", err);
+      mostrarError(
+        "Ocurrió un error inesperado al procesar el pago: " + (err?.message || err)
+      );
+    } finally {
+      enviando = false;
+      if (!ordenCreada) {
+        botonPagar.disabled = false;
+        botonPagar.textContent = "Pagar";
+      }
     }
-
-    await finalizarCompra(orden, datos);
   });
 }
 
@@ -233,25 +256,46 @@ async function finalizarCompra(orden, datos) {
     comprador: datos.buyerName,
   });
 
-  const qrDataUrl = await QRCode.toDataURL(contenidoQr, { width: 240, margin: 1 });
+  let qrDataUrl = "";
+  let pdfBase64 = "";
+  let avisoLibrerias = "";
 
-  const pdfBase64 = generarPdfRecibo(orden, datos, qrDataUrl);
+  try {
+    if (typeof QRCode === "undefined") throw new Error("La librería de QR no cargó (revisa tu conexión a internet).");
+    qrDataUrl = await QRCode.toDataURL(contenidoQr, { width: 240, margin: 1 });
+  } catch (err) {
+    console.error("Error generando el QR:", err);
+    avisoLibrerias += "No se pudo generar el QR: " + (err.message || err) + " ";
+  }
+
+  try {
+    if (!window.jspdf) throw new Error("La librería de PDF no cargó (revisa tu conexión a internet).");
+    pdfBase64 = generarPdfRecibo(orden, datos, qrDataUrl);
+  } catch (err) {
+    console.error("Error generando el PDF:", err);
+    avisoLibrerias += "No se pudo generar el PDF: " + (err.message || err) + " ";
+  }
 
   formEl.style.display = "none";
   exitoEl.style.display = "block";
   exitoEl.innerHTML = `
     <h2>¡Compra confirmada!</h2>
-    <p>Tu boleto para <strong>${eventoActual.title}</strong> quedó registrado.</p>
-    <img src="${qrDataUrl}" alt="Código QR del boleto" style="width:200px;height:200px;border-radius:16px;margin:1rem 0;" />
+    <p>Tu boleto para <strong>${esc(eventoActual.title)}</strong> quedó registrado.</p>
+    ${qrDataUrl ? `<img src="${qrDataUrl}" alt="Código QR del boleto" style="width:200px;height:200px;border-radius:16px;margin:1rem 0;" />` : ""}
+    ${avisoLibrerias ? `<p class="auth-mensaje auth-error">${avisoLibrerias}</p>` : ""}
     <p style="color:var(--text-secondary);">Código de boleto: <strong>${orden.ticket_code}</strong></p>
     <div style="display:flex; gap:1rem; flex-wrap:wrap; margin-top:1rem;">
       <button id="btn-descargar-pdf" type="button" class="btn-primary">Descargar recibo (PDF)</button>
       <a href="mis-boletos.html" class="btn-secondary">Ver mis boletos</a>
     </div>
-    <p id="estado-envio-correo" style="margin-top:1rem; color:var(--text-secondary);">Enviando el recibo a ${datos.buyerEmail}...</p>
+    <p id="estado-envio-correo" style="margin-top:1rem; color:var(--text-secondary);">Enviando el recibo a ${esc(datos.buyerEmail)}...</p>
   `;
 
   document.getElementById("btn-descargar-pdf").addEventListener("click", () => {
+    if (!pdfBase64) {
+      alert("El PDF no está disponible. Revisa la consola (F12) para ver el error.");
+      return;
+    }
     descargarPdfBase64(pdfBase64, `recibo-${orden.ticket_code}.pdf`);
   });
 
@@ -297,7 +341,7 @@ function generarPdfRecibo(orden, datos, qrDataUrl) {
     y += 22;
   });
 
-  doc.addImage(qrDataUrl, "PNG", 400, 110, 150, 150);
+  if (qrDataUrl) doc.addImage(qrDataUrl, "PNG", 400, 110, 150, 150);
   doc.setFontSize(9);
   doc.setTextColor(120);
   doc.text("Presenta este código QR en la entrada del evento.", 400, 275);
@@ -310,14 +354,23 @@ function generarPdfRecibo(orden, datos, qrDataUrl) {
     780
   );
 
-  return doc.output("datauristring").split(",")[1];
+  return doc.output("datauristring").split("base64,")[1];
 }
 
 function descargarPdfBase64(base64, nombreArchivo) {
+  const binario = atob(base64);
+  const bytes = new Uint8Array(binario.length);
+  for (let i = 0; i < binario.length; i++) bytes[i] = binario.charCodeAt(i);
+  const blob = new Blob([bytes], { type: "application/pdf" });
+  const url = URL.createObjectURL(blob);
+
   const link = document.createElement("a");
-  link.href = "data:application/pdf;base64," + base64;
+  link.href = url;
   link.download = nombreArchivo;
+  document.body.appendChild(link);
   link.click();
+  document.body.removeChild(link);
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
 }
 
 async function enviarReciboPorCorreo(orden, datos, qrDataUrl, pdfBase64) {
@@ -342,10 +395,20 @@ async function enviarReciboPorCorreo(orden, datos, qrDataUrl, pdfBase64) {
       estadoEl.textContent = `Recibo enviado a ${datos.buyerEmail}.`;
     }
   } catch (err) {
+    // Intentar leer el motivo real que devolvió la función (p. ej. error de Resend)
+    let detalle = err.message || "";
+    try {
+      if (err.context && typeof err.context.json === "function") {
+        const cuerpo = await err.context.json();
+        const motivo = cuerpo.error ?? cuerpo;
+        detalle = typeof motivo === "string" ? motivo : motivo.message || JSON.stringify(motivo);
+      }
+    } catch (_) {
+      /* si no se puede leer, se queda el mensaje genérico */
+    }
     if (estadoEl) {
       estadoEl.textContent =
-        "No se pudo enviar el recibo por correo (puedes descargarlo arriba en PDF). " +
-        (err.message || "");
+        "No se pudo enviar el recibo por correo (puedes descargarlo arriba en PDF). " + detalle;
     }
     console.error("Error al invocar send-receipt:", err);
   }

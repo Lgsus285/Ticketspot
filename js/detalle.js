@@ -76,9 +76,17 @@ function precioUnitario() {
   return tipoSeleccionado === "vip" ? Number(eventoActual.vip_price) : Number(eventoActual.general_price);
 }
 
+// Devuelve la cantidad válida (1 a 10) y corrige el campo si el usuario escribió otra cosa.
+function leerCantidad() {
+  const input = document.getElementById("ticket-quantity");
+  if (!input) return 1;
+  const cantidad = Math.min(10, Math.max(1, parseInt(input.value, 10) || 1));
+  if (input.value !== "" && String(cantidad) !== input.value) input.value = cantidad;
+  return cantidad;
+}
+
 function actualizarResumenPrecio() {
-  const cantidadInput = document.getElementById("ticket-quantity");
-  const cantidad = cantidadInput ? Math.max(1, parseInt(cantidadInput.value, 10) || 1) : 1;
+  const cantidad = leerCantidad();
   const total = precioUnitario() * cantidad;
   const resumen = document.getElementById("price-summary");
   if (resumen) {
@@ -105,7 +113,7 @@ if (buyButton) {
     e.preventDefault();
     if (!eventoActual) return;
 
-    const cantidad = cantidadInput ? Math.max(1, parseInt(cantidadInput.value, 10) || 1) : 1;
+    const cantidad = leerCantidad();
     const destino = `checkout.html?event=${encodeURIComponent(eventoActual.slug)}&type=${tipoSeleccionado}&qty=${cantidad}`;
 
     const {
