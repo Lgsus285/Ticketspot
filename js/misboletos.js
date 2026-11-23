@@ -1,131 +1,82 @@
 // =========================================================
-// Muestra el historial de compras del usuario logueado,
-// con su código QR y la opción de volver a descargar el PDF.
+// Historial de compras del usuario: boleto con QR, asientos y PDF.
+// Requiere common.js, qrcode.min.js y jspdf.umd.min.js.
 // =========================================================
 
 async function cargarMisBoletos() {
-  const contenedor = document.getElementById("boletos-lista");
-  if (!contenedor) return;
+  const cont = document.getElementById("boletos-lista");
 
-  const {
-    data: { session },
-  } = await supabaseClient.auth.getSession();
-
+  const { data: { session } } = await supabaseClient.auth.getSession();
   if (!session) {
     window.location.href = "login.html?redirect=mis-boletos.html";
     return;
   }
 
-  contenedor.innerHTML = `<p style="color:var(--text-secondary);">Cargando tus boletos...</p>`;
+  cont.innerHTML = `<p class="empty">Cargando tus boletos...</p>`;
 
   const { data: ordenes, error } = await supabaseClient
     .from("orders")
-    .select("*, events(title, date_label, location, image_url)")
+    .select("*, events(title, date_label, location, image_url), order_seats(seat_id)")
     .order("created_at", { ascending: false });
 
   if (error) {
-    contenedor.innerHTML = `<p style="color:#ff8a94;">No se pudieron cargar tus boletos: ${error.message}</p>`;
+    cont.innerHTML = `<p class="msg msg-error">No se pudieron cargar tus boletos: ${esc(error.message)}</p>`;
     return;
   }
-
   if (!ordenes || ordenes.length === 0) {
-    contenedor.innerHTML = `<p style="color:var(--text-secondary);">Todavía no has comprado ningún boleto.</p>`;
+    cont.innerHTML = `<p class="empty">Todavía no has comprado ningún boleto. <a href="eventos.html" style="color:var(--accent);">Ver eventos</a></p>`;
     return;
   }
 
-  contenedor.innerHTML = "";
-
+  cont.innerHTML = "";
   for (const orden of ordenes) {
     const evento = orden.events || {};
-    const tarjeta = document.createElement("article");
-    tarjeta.className = "boleto-card";
-    tarjeta.innerHTML = `
-      <img src="${evento.image_url || ""}" alt="${evento.title || ""}" />
-      <div class="boleto-card-content">
-        <h3>${evento.title || "Evento"}</h3>
-        <p style="color:var(--text-secondary);">${evento.date_label || ""} · ${evento.location || ""}</p>
-        <p><strong>Tipo:</strong> ${orden.ticket_type === "vip" ? "VIP" : "General"} · <strong>Cantidad:</strong> ${orden.quantity}</p>
-        <p><strong>Total:</strong> $${Number(orden.total).toFixed(2)} · <strong>Estado:</strong> ${orden.status}</p>
-        <p style="font-size: 0.85rem; color: var(--text-secondary);">Código: ${orden.ticket_code}</p>
-        <div class="boleto-qr" data-code="${orden.ticket_code}"></div>
-        <button class="btn-secondary" type="button" data-order-id="${orden.id}">Descargar recibo (PDF)</button>
-      </div>
-    `;
-    contenedor.appendChild(tarjeta);
+    const ids = (orden.order_seats || []).map((s) => s.seat_id);
+    const tipo = { vip: "VIP", general: "General", mixto: "VIP y General" }[orden.ticket_type] || orden.ticket_type;
 
-    const contenidoQr = JSON.stringify({
-      app: "Ticketspot",
-      codigo: orden.ticket_code,
-      evento: evento.title,
-      tipo: orden.ticket_type,
-      cantidad: orden.quantity,
-      comprador: orden.buyer_name,
-    });
+    const tarjeta = document.createElement("article");
+    tarjeta.className = "ticket";
+    tarjeta.innerHTML = `
+      <div class="ticket-top">
+        <h3>${esc(evento.title || "Evento")}</h3>
+        <p>${esc(evento.date_label || "")} · ${esc(evento.location || "")}</p>
+      </div>
+      <div class="ticket-cut"></div>
+      <div class="ticket-bottom">
+        <div class="boleto-qr"></div>
+        <div class="ticket-data">
+          <span><strong>${esc(tipo)}</strong> · ${orden.quantity} ${orden.quantity === 1 ? "entrada" : "entradas"}</span>
+          ${ids.length ? `<span>${ids.map((id) => esc(etiquetaCorta(id))).join("<br>")}</span>` : ""}
+          <span>Total ${dinero(orden.total)}</span>
+          <span class="code">${esc(orden.ticket_code)}</span>
+        </div>
+      </div>
+      <div class="ticket-actions"><button class="btn-secondary btn-block" type="button" data-order-id="${esc(orden.id)}">Descargar recibo (PDF)</button></div>`;
+    cont.appendChild(tarjeta);
+
     let qrDataUrl = "";
     const qrDiv = tarjeta.querySelector(".boleto-qr");
     try {
-      qrDataUrl = await QRCode.toDataURL(contenidoQr, { width: 160, margin: 1 });
-      qrDiv.innerHTML = `<img src="${qrDataUrl}" alt="QR" style="width:140px;height:140px;border-radius:12px;" />`;
+      qrDataUrl = await QRCode.toDataURL(contenidoQr(orden, evento, orden.buyer_name, ids), { width: 160, margin: 1 });
+      qrDiv.innerHTML = `<img src="${qrDataUrl}" alt="Código QR" width="112" height="112" />`;
     } catch (err) {
       console.error("Error generando el QR:", err);
-      qrDiv.innerHTML = `<p style="color:#ff8a94;font-size:.85rem;">No se pudo generar el QR.</p>`;
+      qrDiv.innerHTML = `<p class="note">No se pudo generar el QR.</p>`;
     }
 
-    const boton = tarjeta.querySelector("button[data-order-id]");
-    boton.addEventListener("click", () => {
+    tarjeta.querySelector("button[data-order-id]").addEventListener("click", () => {
       try {
-        regenerarPdf(orden, evento, qrDataUrl);
+        const doc = crearPdfRecibo({
+          orden, evento, comprador: orden.buyer_name, correo: orden.buyer_email,
+          asientos: ids.map(etiquetaAsiento), qrDataUrl,
+        });
+        descargarPdf(doc, `recibo-${orden.ticket_code}.pdf`);
       } catch (err) {
         console.error("Error generando el PDF:", err);
         alert("No se pudo generar el PDF: " + (err.message || err));
       }
     });
   }
-}
-
-function regenerarPdf(orden, evento, qrDataUrl) {
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ unit: "pt", format: "a4" });
-
-  doc.setFontSize(20);
-  doc.text("Ticketspot — Recibo de compra", 40, 50);
-
-  doc.setDrawColor(220);
-  doc.line(40, 70, 555, 70);
-
-  const filas = [
-    ["Evento", evento.title || ""],
-    ["Fecha", evento.date_label || ""],
-    ["Lugar", evento.location || ""],
-    ["Comprador", orden.buyer_name],
-    ["Correo", orden.buyer_email],
-    ["Tipo de boleto", orden.ticket_type === "vip" ? "VIP" : "General"],
-    ["Cantidad", String(orden.quantity)],
-    ["Total pagado", `$${Number(orden.total).toFixed(2)}`],
-    ["Código de boleto", orden.ticket_code],
-    ["Fecha de compra", new Date(orden.created_at).toLocaleString("es-PA")],
-  ];
-
-  doc.setFontSize(13);
-  let y = 100;
-  filas.forEach(([etiqueta, valor]) => {
-    doc.setFont(undefined, "bold");
-    doc.text(etiqueta + ":", 40, y);
-    doc.setFont(undefined, "normal");
-    doc.text(String(valor), 190, y);
-    y += 22;
-  });
-
-  if (qrDataUrl) doc.addImage(qrDataUrl, "PNG", 400, 90, 150, 150);
-  const blob = doc.output("blob");
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = `recibo-${orden.ticket_code}.pdf`;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  setTimeout(() => URL.revokeObjectURL(url), 2000);
 }
 
 document.addEventListener("DOMContentLoaded", cargarMisBoletos);

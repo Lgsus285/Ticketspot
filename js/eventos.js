@@ -1,44 +1,57 @@
 // =========================================================
-// Carga el catálogo completo de eventos desde la tabla "events"
-// de Supabase y dibuja las tarjetas dentro de #event-grid.
+// Catálogo: lista de eventos con filtro por categoría y búsqueda.
 // =========================================================
 
-async function cargarEventos() {
-  const contenedor = document.getElementById("event-grid");
-  if (!contenedor) return;
+let todos = [];
+let categoriaActual = "Todos";
+let consulta = "";
 
-  contenedor.innerHTML = `<p style="color:var(--text-secondary);">Cargando eventos...</p>`;
-
-  const { data: eventos, error } = await supabaseClient
-    .from("events")
-    .select("*")
-    .order("event_date", { ascending: true });
-
-  if (error) {
-    contenedor.innerHTML = `<p style="color:#ff8a94;">No se pudieron cargar los eventos: ${error.message}</p>`;
-    return;
-  }
-
-  if (!eventos || eventos.length === 0) {
-    contenedor.innerHTML = `<p style="color:var(--text-secondary);">Todavía no hay eventos cargados en la base de datos.</p>`;
-    return;
-  }
-
-  contenedor.innerHTML = eventos
-    .map(
-      (evento) => `
-      <article class="event-card">
-        <img src="${evento.image_url}" alt="${evento.title}" />
-        <div class="event-card-content">
-          <h3>${evento.title}</h3>
-          <p>${evento.description || ""}</p>
-          <p class="event-price">Desde $${Number(evento.general_price).toFixed(2)}</p>
-          <a class="btn btn-secondary" href="detalle.html?event=${encodeURIComponent(evento.slug)}">Ver detalles</a>
-        </div>
-      </article>
-    `
-    )
+function pintarCategorias() {
+  const cont = document.getElementById("chips");
+  const cats = ["Todos", ...new Set(todos.map((e) => e.category || "Eventos"))];
+  cont.innerHTML = cats
+    .map((c) => `<button type="button" class="chip${c === categoriaActual ? " active" : ""}" data-cat="${esc(c)}">${esc(c)}</button>`)
     .join("");
+  cont.querySelectorAll(".chip").forEach((b) =>
+    b.addEventListener("click", () => {
+      categoriaActual = b.dataset.cat;
+      pintarCategorias();
+      pintarEventos();
+    })
+  );
+}
+
+function pintarEventos() {
+  const grid = document.getElementById("event-grid");
+  const q = consulta.trim().toLowerCase();
+  const lista = todos.filter((e) => {
+    const okCat = categoriaActual === "Todos" || (e.category || "Eventos") === categoriaActual;
+    const texto = `${e.title} ${e.location || ""} ${e.category || ""} ${e.description || ""}`.toLowerCase();
+    return okCat && (!q || texto.includes(q));
+  });
+  grid.innerHTML = lista.length
+    ? lista.map(tarjetaEvento).join("")
+    : `<p class="empty">No encontramos eventos con ese filtro.</p>`;
+}
+
+async function cargarEventos() {
+  const grid = document.getElementById("event-grid");
+  const { data, error } = await supabaseClient.from("events").select("*").order("event_date", { ascending: true });
+  if (error) {
+    grid.innerHTML = `<p class="msg msg-error">No se pudieron cargar los eventos: ${esc(error.message)}</p>`;
+    return;
+  }
+  todos = data || [];
+  if (!todos.length) {
+    grid.innerHTML = `<p class="empty">Todavía no hay eventos cargados.</p>`;
+    return;
+  }
+  pintarCategorias();
+  pintarEventos();
+  document.getElementById("search").addEventListener("input", (e) => {
+    consulta = e.target.value;
+    pintarEventos();
+  });
 }
 
 document.addEventListener("DOMContentLoaded", cargarEventos);

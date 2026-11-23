@@ -3,60 +3,71 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ticketspot</title>
+  <title>Entradas para eventos en Panamá | Ticketspot</title>
   <link rel="stylesheet" href="../style.css" />
 </head>
 <body>
   <header class="site-header">
     <div class="container header-inner">
-      <a class="logo" href="index.html">TICKETSPOT</a>
+      <a class="logo" href="index.html">Ticketspot</a>
       <nav class="site-nav">
         <a class="active" href="index.html">Inicio</a>
         <a href="eventos.html">Eventos</a>
         <a data-nav="mis-boletos" href="mis-boletos.html" style="display:none;">Mis boletos</a>
-        <a data-nav="login" href="login.html">Login</a>
+        <a data-nav="login" href="login.html">Ingresar</a>
         <a data-nav="logout" href="#" style="display:none;">Cerrar sesión</a>
       </nav>
     </div>
   </header>
 
   <main>
-    <section class="hero">
-      <div class="container">
-        <p style="margin-bottom: 1rem;text-transform: uppercase; letter-spacing: 0.18em; color: #ff8a94; font-weight: 700;">
-          Compra tus boletos fácil y rápido
-        </p>
-        <h1>COMPRA TUS BOLETOS</h1>
-        <p>Disfruta de una experiencia profesional para adquirir entradas a conciertos, teatros, festivales y eventos exclusivos.</p>
-        <div style="display: flex; justify-content: center; gap:1rem; flex-wrap: wrap; margin-top: 2rem;">
-          <a class="btn-primary" href="eventos.html">Ver eventos</a>
-          <a class="btn-secondary" href="login.html">Iniciar sesión</a>
+    <section class="hero-event" id="hero" hidden>
+      <img class="hero-image" id="hero-image" src="" alt="" />
+      <div class="hero-bar">
+        <div class="container hero-bar-inner">
+          <div>
+            <p class="hero-kicker" id="hero-kicker"></p>
+            <h2 class="hero-title" id="hero-title"></h2>
+            <p class="hero-meta" id="hero-meta"></p>
+          </div>
+          <a class="btn-primary" id="hero-link" href="eventos.html">Comprar entradas</a>
         </div>
       </div>
     </section>
 
-    <section class="featured-events container">
-      <div class="section-title">
-        <div>
-          <h2>Eventos destacados</h2>
-          <p>Los mejores espectáculos del mes con los boletos disponibles en diferentes categorías.</p>
-        </div>
-      </div>
+    <div class="container intro">
+      <h1>Entradas para conciertos, teatro y eventos en Panamá</h1>
+      <p>Elige el evento, escoge tus asientos y recibe tu boleto con código QR.</p>
+    </div>
 
-      <div class="card-grid" id="featured-grid">
-        <p style="color:var(--text-secondary);">Cargando eventos...</p>
+    <section class="section container">
+      <div class="section-head">
+        <h2>Próximos eventos</h2>
+        <a href="eventos.html">Ver todos</a>
       </div>
+      <div class="event-grid" id="featured-grid"><p class="empty">Cargando eventos...</p></div>
     </section>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../js/config.js"></script>
   <script src="../js/supabaseClient.js"></script>
+  <script src="../js/common.js"></script>
   <script src="../js/nav-auth.js"></script>
   <script src="../js/index.js"></script>
 
   <footer class="site-footer">
-    <div class="container">&copy; 2026 Ticketspot. Eventos cargados.</div>
+    <div class="container footer-grid">
+      <div>
+        <a class="logo" href="index.html">Ticketspot</a>
+        <p></p>
+      </div>
+      <ul>
+        <li><a href="eventos.html">Todos los eventos</a></li>
+        <li><a href="mis-boletos.html">Mis boletos</a></li>
+        <li><a href="login.html">Ingresar o crear cuenta</a></li>
+      </ul>
+    </div>
   </footer>
 </body>
 </html>

@@ -1,43 +1,37 @@
 // =========================================================
-// Carga los eventos destacados (los primeros 3) en la portada,
-// desde la tabla "events" de Supabase.
+// Portada: evento destacado (banner) + próximos eventos.
 // =========================================================
 
-async function cargarDestacados() {
-  const contenedor = document.getElementById("featured-grid");
-  if (!contenedor) return;
-
+async function cargarPortada() {
+  const grid = document.getElementById("featured-grid");
   const { data: eventos, error } = await supabaseClient
     .from("events")
     .select("*")
-    .order("event_date", { ascending: true })
-    .limit(3);
+    .order("event_date", { ascending: true });
 
   if (error) {
-    contenedor.innerHTML = `<p style="color:#ff8a94;">No se pudieron cargar los eventos: ${error.message}</p>`;
+    grid.innerHTML = `<p class="msg msg-error">No se pudieron cargar los eventos: ${esc(error.message)}</p>`;
     return;
   }
-
   if (!eventos || eventos.length === 0) {
-    contenedor.innerHTML = `<p style="color:var(--text-secondary);">Todavía no hay eventos cargados.</p>`;
+    grid.innerHTML = `<p class="empty">Todavía no hay eventos cargados.</p>`;
     return;
   }
 
-  contenedor.innerHTML = eventos
-    .map(
-      (evento) => `
-      <article class="event-card">
-        <img src="${evento.image_url}" alt="${evento.title}" />
-        <div class="event-card-content">
-          <h3>${evento.title}</h3>
-          <p>${evento.description || ""}</p>
-          <p class="event-price">$${Number(evento.general_price).toFixed(2)}</p>
-          <a class="btn btn-secondary" href="detalle.html?event=${encodeURIComponent(evento.slug)}">Ver detalles</a>
-        </div>
-      </article>
-    `
-    )
-    .join("");
+  const destacado = eventos.find((e) => e.featured) || eventos[0];
+  const hero = document.getElementById("hero");
+  const img = document.getElementById("hero-image");
+  img.src = destacado.image_url;
+  img.alt = `Afiche de ${destacado.title}`;
+  img.style.objectPosition = destacado.image_position || "center";
+  document.getElementById("hero-kicker").textContent = `${destacado.category || "Evento"} · ${fechaCorta(destacado)}`;
+  document.getElementById("hero-title").textContent = destacado.title;
+  document.getElementById("hero-meta").textContent = destacado.location || "";
+  document.getElementById("hero-link").href = `detalle.html?event=${encodeURIComponent(destacado.slug)}`;
+  hero.hidden = false;
+
+  const resto = eventos.filter((e) => e.id !== destacado.id).slice(0, 6);
+  grid.innerHTML = resto.map(tarjetaEvento).join("");
 }
 
-document.addEventListener("DOMContentLoaded", cargarDestacados);
+document.addEventListener("DOMContentLoaded", cargarPortada);

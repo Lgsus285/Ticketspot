@@ -9,40 +9,45 @@
 <body>
   <header class="site-header">
     <div class="container header-inner">
-      <a class="logo" href="index.html">TICKETSPOT</a>
+      <a class="logo" href="index.html">Ticketspot</a>
       <nav class="site-nav">
         <a href="index.html">Inicio</a>
         <a class="active" href="eventos.html">Eventos</a>
         <a data-nav="mis-boletos" href="mis-boletos.html" style="display:none;">Mis boletos</a>
-        <a data-nav="login" href="login.html">Login</a>
+        <a data-nav="login" href="login.html">Ingresar</a>
         <a data-nav="logout" href="#" style="display:none;">Cerrar sesión</a>
       </nav>
     </div>
   </header>
 
-  <main>
-    <section class="event-listing container" style="padding: 3rem 0;">
-      <div class="section-title">
-        <div>
-          <h2>Todos los eventos</h2>
-          <p>Explora el catálogo completo y elige el boleto que más te convenga.</p>
-        </div>
-      </div>
-
-      <div class="event-grid" id="event-grid">
-        <p style="color:var(--text-secondary);">Cargando eventos...</p>
-      </div>
-    </section>
+  <main class="page container">
+    <div class="section-head"><h2>Todos los eventos</h2></div>
+    <div class="filters">
+      <div class="chips" id="chips"></div>
+      <div class="search"><input id="search" type="text" placeholder="Buscar evento o lugar" aria-label="Buscar evento" /></div>
+    </div>
+    <div class="event-grid" id="event-grid"><p class="empty">Cargando eventos...</p></div>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../js/config.js"></script>
   <script src="../js/supabaseClient.js"></script>
+  <script src="../js/common.js"></script>
   <script src="../js/nav-auth.js"></script>
   <script src="../js/eventos.js"></script>
 
   <footer class="site-footer">
-    <div class="container">&copy; 2026 Ticketspot. Eventos cargados en vivo desde Supabase.</div>
+    <div class="container footer-grid">
+      <div>
+        <a class="logo" href="index.html">Ticketspot</a>
+        <p></p>
+      </div>
+      <ul>
+        <li><a href="eventos.html">Todos los eventos</a></li>
+        <li><a href="mis-boletos.html">Mis boletos</a></li>
+        <li><a href="login.html">Ingresar o crear cuenta</a></li>
+      </ul>
+    </div>
   </footer>
 </body>
 </html>
