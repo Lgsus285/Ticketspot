@@ -26,7 +26,7 @@ async function cargarEvento() {
   $("event-cat").textContent = evento.category || "Evento";
   $("event-title").textContent = evento.title;
   $("event-summary").textContent = evento.summary || evento.description || "";
-  $("event-image").src = evento.image_url;
+  $("event-image").src = rutaImagen(evento.image_url);
   $("event-image").alt = `Afiche de ${evento.title}`;
   $("event-date").textContent = evento.date_label || fechaCorta(evento);
   $("event-location").textContent = evento.location || "";

@@ -271,7 +271,7 @@ async function finalizarCompra(orden, datos) {
 async function enviarReciboPorCorreo(orden, datos, qrDataUrl, pdfBase64) {
   const estadoEl = document.getElementById("estado-envio-correo");
   try {
-    const { error } = await supabaseClient.functions.invoke("super-action", {
+    const { error } = await supabaseClient.functions.invoke(window.EMAIL_FUNCTION_NAME || "super-action", {
       body: { ticket_code: orden.ticket_code, qr_data_url: qrDataUrl, pdf_base64: pdfBase64 },
     });
     if (error) throw error;

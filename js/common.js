@@ -20,6 +20,13 @@ function fechaCorta(evento) {
   return `${parseInt(m[3], 10)} ${MESES[parseInt(m[2], 10) - 1]} ${m[1]}`;
 }
 
+// Las imágenes de la base de datos se guardan como "../imagenes/archivo.jpg" (páginas dentro de html/).
+// Si las páginas están en la raíz del sitio, se quita el "../" para que sigan cargando.
+function rutaImagen(url) {
+  const ruta = String(url || "");
+  return /\/html\//.test(window.location.pathname) ? ruta : ruta.replace(/^\.\.\//, "");
+}
+
 // ---------- Asientos ----------
 // Un asiento se identifica como SECCION|FILA|NUMERO, ej. "PLA-CEN|B|5".
 const NOMBRES_SECCION = {
@@ -174,7 +181,7 @@ function etiquetaCorta(id) {
 function tarjetaEvento(ev) {
   return `
     <a class="event-card" href="detalle.html?event=${encodeURIComponent(ev.slug)}">
-      <div class="thumb"><img src="${esc(ev.image_url)}" alt="Afiche de ${esc(ev.title)}" style="object-position:${esc(ev.image_position || "center")}" loading="lazy" /></div>
+      <div class="thumb"><img src="${esc(rutaImagen(ev.image_url))}" alt="Afiche de ${esc(ev.title)}" style="object-position:${esc(ev.image_position || "center")}" loading="lazy" /></div>
       <div class="event-card-body">
         <span class="event-cat">${esc(ev.category || "Evento")}</span>
         <h3>${esc(ev.title)}</h3>

@@ -21,7 +21,7 @@ async function cargarPortada() {
   const destacado = eventos.find((e) => e.featured) || eventos[0];
   const hero = document.getElementById("hero");
   const img = document.getElementById("hero-image");
-  img.src = destacado.image_url;
+  img.src = rutaImagen(destacado.image_url);
   img.alt = `Afiche de ${destacado.title}`;
   img.style.objectPosition = destacado.image_position || "center";
   document.getElementById("hero-kicker").textContent = `${destacado.category || "Evento"} · ${fechaCorta(destacado)}`;
