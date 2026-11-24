@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Elige tus asientos | Ticketspot</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="index.html">Ticketspot</a>
+      <nav class="site-nav">
+        <a href="index.html">Inicio</a>
+        <a class="active" href="eventos.html">Eventos</a>
+        <a data-nav="mis-boletos" href="mis-boletos.html" style="display:none;">Mis boletos</a>
+        <a data-nav="login" href="login.html">Ingresar</a>
+        <a data-nav="logout" href="#" style="display:none;">Cerrar sesión</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="page container">
+    <p class="breadcrumb"><a href="eventos.html">Eventos</a> / <a id="crumb-event" href="eventos.html">...</a> / Asientos</p>
+    <h1 id="seat-title" style="margin-bottom:0.3rem;">Elige tus asientos</h1>
+    <p id="seat-sub" style="color:var(--muted); margin-bottom:1.3rem;"></p>
+
+    <div class="seat-layout">
+      <div class="map-card">
+        <div class="map-scroll"><svg id="seat-map" class="seat-map" role="group" aria-label="Mapa de asientos"></svg></div>
+        <div class="legend">
+          <span><i class="l-general"></i> General</span>
+          <span><i class="l-vip"></i> VIP</span>
+          <span><i class="l-selected"></i> Tu selección</span>
+          <span><i class="l-sold"></i> Ocupado</span>
+        </div>
+      </div>
+
+      <aside class="seat-side panel">
+        <h3>Tus asientos</h3>
+        <ul class="price-list" id="seat-prices"></ul>
+        <p class="note" id="seat-empty" style="margin:0 0 1rem;">Todavía no elegiste ningún asiento.</p>
+        <ul class="seat-list" id="seat-list"></ul>
+        <div class="total-row"><span>Total</span><strong id="seat-total">$0.00</strong></div>
+        <p class="msg msg-error" id="seat-msg" hidden></p>
+        <button id="seat-continue" class="btn-primary btn-block" type="button" disabled>Continuar al pago</button>
+        <p class="note">Máximo 8 asientos por compra.</p>
+      </aside>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js"></script>
+  <script src="js/supabaseClient.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/nav-auth.js"></script>
+  <script src="js/layouts.js"></script>
+  <script src="js/asientos.js"></script>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div>
+        <a class="logo" href="index.html">Ticketspot</a>
+        <p>Proyecto académico. Los eventos, precios y pagos son de demostración; no se realiza ningún cargo real. Los afiches pertenecen a sus respectivos organizadores.</p>
+      </div>
+      <ul>
+        <li><a href="eventos.html">Todos los eventos</a></li>
+        <li><a href="mis-boletos.html">Mis boletos</a></li>
+        <li><a href="login.html">Ingresar o crear cuenta</a></li>
+      </ul>
+    </div>
+  </footer>
+</body>
+</html>
