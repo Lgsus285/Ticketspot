@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Administración | Ticketspot</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="admin-body">
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="index.html">Ticketspot <span class="admin-brand-tag">ADMIN</span></a>
+      <nav class="site-nav"><a href="index.html">Ver sitio</a><a href="#eventos">Eventos</a><a href="#ventas">Ventas</a><a href="#" id="admin-logout">Cerrar sesión</a></nav>
+    </div>
+  </header>
+  <main class="admin-main container">
+    <div class="admin-heading"><div><p class="admin-eyebrow">CENTRO DE CONTROL</p><h1>Panel de administración</h1><p class="admin-subtitle" id="admin-welcome">Gestiona los eventos y supervisa las ventas de Ticketspot.</p></div><button class="btn-primary" id="new-event">+ Crear evento</button></div>
+    <p class="msg" id="admin-message" hidden></p>
+    <section class="admin-stats" aria-label="Resumen">
+      <article class="admin-stat"><span>Eventos registrados</span><strong id="stat-events">—</strong><small>Total en el catálogo</small></article>
+      <article class="admin-stat"><span>Ventas registradas</span><strong id="stat-orders">—</strong><small>Compras realizadas</small></article>
+      <article class="admin-stat"><span>Boletos vendidos</span><strong id="stat-tickets">—</strong><small>Unidades compradas</small></article>
+      <article class="admin-stat"><span>Ingresos simulados</span><strong id="stat-revenue">—</strong><small>No representa cobros reales</small></article>
+    </section>
+    <section class="admin-section" id="eventos">
+      <div class="admin-section-head"><div><p class="admin-eyebrow">CATÁLOGO</p><h2>Administrar eventos</h2></div><input id="event-search" class="admin-search" type="search" placeholder="Buscar evento..." aria-label="Buscar evento" /></div>
+      <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Evento</th><th>Fecha</th><th>Categoría</th><th>Precio general</th><th>Destacado</th><th>Acciones</th></tr></thead><tbody id="events-table"><tr><td colspan="6">Cargando eventos...</td></tr></tbody></table></div>
+    </section>
+    <section class="admin-section" id="ventas">
+      <div class="admin-section-head"><div><p class="admin-eyebrow">ACTIVIDAD</p><h2>Últimas ventas</h2></div></div>
+      <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Código</th><th>Comprador</th><th>Evento</th><th>Fecha de compra</th><th>Cantidad</th><th>Total</th><th>Estado</th></tr></thead><tbody id="orders-table"><tr><td colspan="7">Cargando ventas...</td></tr></tbody></table></div>
+    </section>
+  </main>
+
+  <dialog id="event-dialog" class="admin-dialog">
+    <form id="event-form" class="admin-form">
+      <div class="admin-dialog-head"><div><p class="admin-eyebrow">CATÁLOGO DE EVENTOS</p><h2 id="dialog-title">Crear evento</h2></div><button type="button" class="dialog-close" id="close-dialog" aria-label="Cerrar">×</button></div>
+      <input type="hidden" id="event-id" />
+      <div class="admin-form-grid">
+        <label class="span-2">Nombre del evento<input id="event-title" required maxlength="140" /></label>
+        <label>Slug (URL)<input id="event-slug" required maxlength="160" placeholder="nombre-del-evento" /></label>
+        <label>Categoría<input id="event-category" required value="Eventos" /></label>
+        <label>Fecha<input id="event-date" type="date" /></label>
+        <label>Lugar<input id="event-location" /></label>
+        <label>Precio general ($)<input id="event-general" type="number" min="0" step="0.01" required /></label>
+        <label>Precio VIP ($)<input id="event-vip" type="number" min="0" step="0.01" value="0" required /></label>
+        <label>Tipo de recinto<select id="event-layout"><option value="general">General (sin asientos)</option><option value="teatro">Teatro</option><option value="arena">Arena</option></select></label>
+        <label>URL de imagen<input id="event-image" placeholder="imagenes/afiche.jpg" /></label>
+        <label class="span-2">Descripción<textarea id="event-description" rows="3"></textarea></label>
+        <label class="admin-check span-2"><input id="event-featured" type="checkbox" /> Mostrar como evento destacado</label>
+      </div>
+      <p class="admin-form-note">Los eventos tipo teatro y arena utilizan los mapas de asientos ya definidos en Ticketspot.</p>
+      <div class="admin-form-actions"><button type="button" class="btn-secondary" id="cancel-event">Cancelar</button><button class="btn-primary" type="submit" id="save-event">Guardar evento</button></div>
+    </form>
+  </dialog>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js"></script><script src="js/supabaseClient.js"></script><script src="js/common.js"></script><script src="js/admin.js"></script>
+</body>
+</html>
