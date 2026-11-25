@@ -7,7 +7,7 @@ Supabase + Resend).
 
 ---
 
-## 6. Estructura del proyecto
+## Estructura del proyecto
 
 ```
 Ticketspot/
@@ -36,9 +36,3 @@ Ticketspot/
         └── send-receipt/
             └── index.ts        -> Edge Function que envía el correo
 ```
-
-  tienen las etiquetas balanceadas (se corrigieron los divs sin cerrar de
-  tu `detalle.html` original y la estructura rota de `login.html`).
-
-Lo único que no se puede probar desde aquí es la llamada real a
-Supabase/Resend, porque requiere tu propio proyecto y tus propias llaves.
